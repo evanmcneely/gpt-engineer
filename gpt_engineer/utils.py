@@ -45,8 +45,22 @@ def sanitize_input(input: str) -> str:
 DISALLOWED_FILE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".gif", ".bmp", ".svg"]
 
 
+similar_paths = {
+    "js": ["jsx", "js"],
+    "jsx": ["js", "jsx"],
+    "ts": ["tsx", "ts"],
+    "tsx": ["ts", "tsx"],
+}
+
+
 def validate_file_path(abs_path: str) -> None:
     # TODO: specific error messaging
+    abs_path = sanitize_input(abs_path)
+    ext = _get_file_extension(abs_path)
+    paths_to_try = similar_paths.get(ext, [])
+
+    for path in paths_to_try:
+        path = resolve_path(abs_path, path)
 
     if not _path_exists(abs_path):
         raise ValueError(f"{abs_path} does not exist")
